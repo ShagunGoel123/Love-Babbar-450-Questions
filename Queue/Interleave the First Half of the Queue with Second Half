@@ -1,0 +1,61 @@
+Problem:
+
+You are given a queue Q of N integers of even length,
+rearrange the elements by interleaving the first half of the queue with the second half of the queue.
+
+Example 1:
+Input:
+N = 4
+Q = {2,4,3,1}
+Output:
+{2,3,4,1}
+Explanation:
+After the mentioned rearrangement of the first half
+and second half, our final queue will be {2,3,4,1}.
+ 
+Example 2:
+Input:
+N = 2
+Q = {3,5}
+Output:
+{3,5}
+Explanation:
+After the mentioned rearrangement of the first half
+and second half, our final queue will be {3,5}.
+
+
+
+Solution:
+
+class Solution{
+public:
+    vector<int> rearrangeQueue(queue<int> &q){
+         
+       queue<int> newQ;
+       vector<int>ans;
+    
+       int n=q.size()/2;
+
+       // Step-1: Fetch first half elements from input queue and push into a newQueue
+       for(int i=0;i<n;i++)
+       {
+          int val=q.front();
+          q.pop();
+          newQ.push(val);
+       }
+
+       // Step-2: Push alternative elements in input queue itself
+       while(!newQ.empty())
+       {
+         int val=newQ.front();
+         newQ.pop();
+         ans.push_back(val);
+
+         val=q.front();
+         q.pop();
+         ans.push_back(val);
+       }
+      return ans;
+    }
+};
+ 
