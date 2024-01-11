@@ -1,0 +1,92 @@
+Problem:
+
+Given a binary tree, find if it is height balanced or not. 
+A tree is height balanced if difference between heights of left and right
+subtrees is not more than one for all nodes of tree. 
+
+A height balanced tree
+        1
+     /     \
+   10      39
+  /
+5
+
+An unbalanced tree
+        1
+     /    
+   10   
+  /
+5
+
+Example 1:
+
+Input:
+      1
+    /
+   2
+    \
+     3 
+Output: 0
+Explanation: The max difference in height
+of left subtree and right subtree is 2,
+which is greater than 1. Hence unbalanced
+
+Example 2:
+Input:
+       10
+     /   \
+    20   30 
+  /   \
+ 40   60
+Output: 1
+Explanation: The max difference in height
+of left subtree and right subtree is 1.
+Hence balanced. 
+
+Your Task:
+You don't need to take input. Just complete the function isBalanced()
+that takes root node as parameter and returns true, if the tree is balanced else returns false.
+
+
+
+Solution:
+
+//Approach 1:
+//Time Complexity: O(n^2)
+//Space Complexity: O(n)
+
+class Solution{
+    private:
+      int height(struct Node* node){
+          //base case
+          if(node == NULL){
+              return 0;
+          }
+          
+          int left = height(node->left);
+          int right = height(node->right);
+          
+          int ans = max(left,right) +1;
+          return ans;
+      }
+    public:
+    //Function to check whether a binary tree is balanced or not.
+    bool isBalanced(Node *root)
+    {
+        //base case
+        if(root == NULL){
+            return true;
+        }
+        
+        bool left = isBalanced(root->left);
+        bool right = isBalanced(root->right);
+        bool diff = abs(height(root->left) - height(root->right)) <= 1;
+        
+        if(left && right && diff){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
