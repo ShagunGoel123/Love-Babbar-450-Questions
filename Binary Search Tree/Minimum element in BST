@@ -1,0 +1,40 @@
+Problem:
+
+Given the root of a Binary Search Tree. The task is to find the minimum valued element in this given BST.
+
+Example 1:
+Input:
+           5
+         /    \
+        4      6
+       /        \
+      3          7
+     /
+    1
+Output: 1
+
+
+Example 2:
+Input:
+             9
+              \
+               10
+                \
+                 11
+Output: 9
+
+
+
+Solution:
+
+//Time Complexity: O(H)
+//Space Complexity: O(1)
+
+int minValue(struct Node *root) {
+    struct Node* temp = root;
+
+    while(temp->left != NULL){
+        temp = temp->left;
+    }
+    return temp->data;
+}
