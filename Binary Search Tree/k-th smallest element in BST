@@ -25,8 +25,7 @@ Explanation: There is no 5th smallest element in the BST as the size of BST is 3
 
 Solution:
 
-//TC: O(n)
-//SC: O(H)
+//Approach 1: Time Complexity:O(n), Space Complexity:O(H)
 
 class Solution {
   public:
@@ -58,3 +57,55 @@ class Solution {
         return ans;
     }
 };
+
+
+
+
+//Approach 2: Optimized approach
+//Time Complexity: O(n), Space Complexity: O(1) by using Morris Traversal
+
+class Solution {
+  public:
+    // Return the Kth smallest element in the given BST
+    int KthSmallestElement(Node *root, int K) {
+       while(root != NULL){
+
+           //The problem of storing a pointer back to root only exists if root has a
+          // left subtree, so let's first handle the case where we don't have a left subtree to worry about.      
+           if(root->left == NULL){
+               if(K == 1){
+                   return root->data;
+               }
+               K-=1;
+               root = root->right;
+           }
+           else{
+
+               //Now since we know we have a left subtree, before we look at 
+              //that left subtree, we need to find the rightmost child of the left subtree.
+               Node* pre = root->left;
+               while(pre->right != NULL && pre->right != root){
+                   pre = pre->right;
+               }
+               if(pre->right == NULL){
+                   pre->right = root;
+                   root = root->left;
+               }
+               else{
+
+                  // We found that the rightmost child of the left subtree is pointing
+                  //at root already! So revert the change we made before, and consider
+                  //root value, because this means we have processed all the nodes in 
+                  // the left subtree, and we can now move to right's subtree.
+                   pre->right = NULL;
+                   if(K == 1)
+                      return root->data;
+                    K-=1;
+                    root = root->right;
+               }
+           }
+       }
+       return -1;
+    }
+};
+
