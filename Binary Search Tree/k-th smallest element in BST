@@ -1,0 +1,60 @@
+Problem:
+
+Given a BST and an integer K. Find the Kth Smallest element in the BST using O(1) extra space. 
+
+Example 1:
+Input:
+      2
+    /   \
+   1     3
+K = 2
+Output: 2
+Explanation: 2 is the 2nd smallest element in the BST
+
+
+Example 2:
+Input:
+        2
+      /  \
+     1    3
+K = 5
+Output: -1
+Explanation: There is no 5th smallest element in the BST as the size of BST is 3
+
+
+
+Solution:
+
+//TC: O(n)
+//SC: O(H)
+
+class Solution {
+  public:
+    int solve(Node* root, int &i, int k){
+        //base case
+        if(root == NULL)
+            return -1;
+            
+        //L    
+        int left = solve(root->left, i, k);
+        
+        if(left != -1){
+            return left;
+        }
+        
+        //N
+        i++;
+        if(i == k){
+            return root->data; 
+        }
+        
+        //R
+        return solve(root->right, i, k);
+    }
+    // Return the Kth smallest element in the given BST
+    int KthSmallestElement(Node *root, int K) {
+        int i = 0;
+        int ans = solve(root,i,K);
+        return ans;
+    }
+};
