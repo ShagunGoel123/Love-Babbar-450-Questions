@@ -41,6 +41,9 @@ In given BST, the inorder predecessor of 11 is 10 whereas it does not have any i
 
 Solution:
 
+//Time Complexity: O(H)
+//Space Complexity: O(1)
+
 class Solution
 {
     public:
