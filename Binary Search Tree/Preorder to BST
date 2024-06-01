@@ -1,0 +1,65 @@
+Problem:
+
+Given an array arr[] of N nodes representing preorder traversal of some BST.
+You have to build the BST  from the given preorder traversal. 
+In Pre-Order traversal, the root node is visited before the left child and right child nodes.
+
+
+Example 1:
+Input:
+N = 5
+arr[]  = {40,30,35,80,100}
+Output: 35 30 100 80 40
+Explanation: PreOrder: 40 30 35 80 100
+Therefore, the BST will be:
+              40
+           /      \
+         30       80
+           \        \   
+           35      100
+Hence, the postOrder traversal will
+be: 35 30 100 80 40
+
+
+Example 2:
+Input:
+N = 8
+arr[]  = {40,30,32,35,80,90,100,120}
+Output: 35 32 30 120 100 90 80 40
+
+
+
+Solution:
+
+//Time Complexity: O(n)
+//Space Complexity: O(n)
+
+class Solution {
+  public:
+  Node* solve(int pre[], int min, int max, int &i, int size){
+      //base case
+       if(i >= size){
+           return NULL;
+       }
+       
+        // if current element does not lie in the range
+       if(pre[i] < min || pre[i] > max){
+           return NULL;
+       }
+       
+       Node* root = newNode(pre[i++]);
+       
+       //recursive calls
+       root->left = solve(pre, min, root->data, i, size);
+       root->right = solve(pre, root->data, max, i, size);
+       return root;
+  }
+  
+    // Function that constructs BST from its preorder traversal.
+    Node* Bst(int pre[], int size) {
+        int min = INT_MIN;
+        int max = INT_MAX;
+        int i = 0;
+        return solve(pre, min, max, i, size);
+    }
+};
