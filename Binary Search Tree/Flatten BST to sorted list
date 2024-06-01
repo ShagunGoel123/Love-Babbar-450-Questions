@@ -1,0 +1,108 @@
+Problem:
+
+You are given a Binary Search Tree (BST) with n nodes, each node has a distinct value assigned to it.
+The goal is to flatten the tree such that, the left child of each element points to nothing (NULL),
+and the right child points to the next element in the sorted list of elements of the BST 
+(look at the examples for clarity). You must accomplish this without using any extra storage,
+except for recursive calls, which are allowed.
+
+Note: If your BST does have a left child, then the system will print a -1 and will skip it,
+resulting in an incorrect solution.
+
+
+Example 1:
+Input:
+          5
+        /    \
+       3      7
+      /  \    /   \
+     2   4  6     8
+Output: 2 3 4 5 6 7 8
+Explanation: 
+After flattening, the tree looks
+like this
+    2
+     \
+      3
+       \
+        4
+         \
+          5
+           \
+            6
+             \
+              7
+               \
+                8
+Here, left of each node points
+to NULL and right contains the
+next node.
+
+
+Example 2:
+Input:
+       5
+        \
+         8
+       /   \
+      7     9  
+Output: 5 7 8 9
+Explanation:
+After flattening, the tree looks like this:
+   5
+    \
+     7
+      \
+       8
+        \
+         9
+
+
+
+Solution:
+
+//Time Complexity: O(n)
+//Space Complexity: O(n)
+
+class Solution
+{
+public:
+    void inorder(Node* root, vector<int> &in){
+        if(root == NULL){
+            return;
+        }
+        inorder(root->left, in);
+        in.push_back(root->data);
+        inorder(root->right, in);
+    }
+    Node *flattenBST(Node *root)
+    {
+        vector<int>inorderVal;
+        
+        //1 Step
+        //store inorder
+        inorder(root,inorderVal);
+        int n = inorderVal.size();
+        
+        //new node create krdi jisme inorder ki first value insert krdi
+        Node* newRoot = new Node(inorderVal[0]);
+        
+        //curr pointer bna diya jo newnode ko point krega
+        Node* curr = newRoot;
+        
+        //2nd Step
+        for(int i=1;i<n;i++){
+            Node* temp = new Node(inorderVal[i]);
+            curr->left = NULL;
+            curr->right = temp;
+            curr = temp;
+        }
+        
+        //3rd Step
+        // last node ke left aur right part ko null krdo
+        curr->left = NULL;
+        curr->right = NULL;
+        
+        return newRoot;
+    }
+};
