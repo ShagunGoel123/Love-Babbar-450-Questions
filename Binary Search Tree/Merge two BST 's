@@ -1,0 +1,215 @@
+Problem:
+
+Given two BSTs, return elements of both BSTs in sorted form.
+
+Example 1:
+Input:
+BST1:
+       5
+     /   \
+    3     6
+   / \
+  2   4  
+BST2:
+        2
+      /   \
+     1     3
+            \
+             7
+            /
+           6
+Output: 1 2 2 3 3 4 5 6 6 7
+Explanation: 
+After merging and sorting the
+two BST we get 1 2 2 3 3 4 5 6 6 7.
+
+
+Example 2:
+Input:
+BST1:
+       12
+     /   
+    9
+   / \    
+  6   11
+BST2:
+      8
+    /  \
+   5    10
+  /
+ 2
+Output: 2 5 6 8 9 10 11 12
+Explanation: 
+After merging and sorting the
+two BST we get 2 5 6 8 9 10 11 12.
+
+
+
+Solution:
+
+//Approach 1:
+//Time Complexity: O(m+n), Space Complexity: O(m+n)
+
+class Solution
+{
+    public:
+    
+    void inorder(Node* root, vector<int> &in){
+        if(root == NULL){
+            return;
+        }
+        
+        inorder(root->left, in);
+        in.push_back(root->data);
+        inorder(root->right, in);
+    }
+    
+    vector<int> mergeArrays(vector<int> &a, vector<int> &b){
+        
+        //ans vector ka size dono vector ke size ke sum ke equal hoga
+        vector<int> ans(a.size() + b.size());
+        
+        int i=0,j=0,k=0;
+        while(i<a.size() && j<b.size()){
+            if(a[i] < b[j]){
+                ans[k++] = a[i];
+                i++;
+            }
+            else{
+                ans[k++] = b[j];
+                j++;
+            }
+        }
+        
+        while(i<a.size()){
+            ans[k++] = a[i];
+            i++;
+        }
+        while(j<b.size()){
+            ans[k++] = b[j];
+            j++;
+        }
+        return ans; 
+    }
+    
+    //Function to return a list of integers denoting the node 
+    //values of both the BST in a sorted order.
+    vector<int> merge(Node *root1, Node *root2)
+    {
+       //Step1: Store Inorder
+       vector<int> bst1, bst2;
+        inorder(root1, bst1);
+        inorder(root2, bst2);
+       
+        // Step 2: Merge the two inorder traversals
+        vector<int> mergedArray = mergeArrays(bst1, bst2);
+       
+        // Step 3: Return the merged sorted array
+        return mergedArray;
+    }
+};
+
+
+
+//Approach 2 - Optimized approach
+//Time complexity: O(m+n)
+//Space Complexity: O(h1+h2)
+
+
+class Solution
+{
+    public:
+ 
+    void convertIntoSortedDLL(Node* root, Node* &head){
+        //base case
+        if(root == NULL){
+            return;
+        }
+        convertIntoSortedDLL(root->right, head);
+        root->right = head;
+        if(head != NULL){
+            head->left = root;
+        }
+        head = root;
+        
+        convertIntoSortedDLL(root->left, head);
+    }
+    
+    Node* mergeLinkedList(Node* head1, Node* head2){
+        Node* head = NULL;
+        Node* tail = NULL;
+        
+        while(head1 != NULL && head2 != NULL){
+            if(head1->data < head2->data){
+                if(head == NULL){
+                    head = head1;
+                    tail = head1;
+                    head1 = head1->right;
+                }
+                else{
+                    tail->right = head1;
+                    head1->left = tail;
+                    tail = head1;
+                    head1 = head1->right;
+                }
+            }
+            else{
+                if(head == NULL){
+                    head = head2;
+                    tail = head2;
+                    head2 = head2->right;
+                }
+                else{
+                    tail->right = head2;
+                    head2->left = tail;
+                    tail = head2;
+                    head2 = head2->right;
+                }
+            }
+        }
+        
+        while(head1 != NULL){
+             tail->right = head1;
+             head1->left = tail;
+             tail = head1;
+             head1 = head1->right;
+        }
+        while(head2 != NULL){
+            tail->right = head2;
+            head2->left = tail;
+            tail = head2;
+            head2 = head2->right;
+        }
+        return head;
+    }
+    
+    //Function to return a list of integers denoting the node 
+    //values of both the BST in a sorted order.
+    vector<int> merge(Node *root1, Node *root2)
+    {
+        
+        //Step1: Convert BST into sorted DLL in-place
+        Node* head1 = NULL;
+        convertIntoSortedDLL(root1, head1);
+        head1->left = NULL;
+        
+        Node* head2 = NULL;
+        convertIntoSortedDLL(root2, head2);
+        head2->left = NULL;
+        
+        //Step2: Merge two sorted linked list
+         Node* head = mergeLinkedList(head1,head2);
+         
+         //Step3: Convert DLL into vector of a integers
+         vector<int> result;
+         Node* curr = head;
+         while(curr != NULL){
+             result.push_back(curr->data);
+             curr = curr->right;
+         }
+         return result;
+    }
+};
+
+
+
