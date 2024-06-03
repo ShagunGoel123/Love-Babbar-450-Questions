@@ -71,8 +71,8 @@ class Solution{
             if(arr[i] == leaf[j]){
                 if(arr[i-1] == leaf[j]-1 && arr[i+1] == leaf[j]+1){
                     return true;
-                    j++;
                 }
+                j++;
             }
            
         }
