@@ -1,0 +1,140 @@
+Problem:
+
+A trie (pronounced as "try") or prefix tree is a tree data structure used to efficiently 
+store and retrieve keys in a dataset of strings.
+There are various applications of this data structure, such as autocomplete and spellchecker.
+
+Implement the Trie class:
+Trie() Initializes the trie object.
+void insert(String word) Inserts the string word into the trie.
+boolean search(String word) Returns true if the string word is in the trie (i.e., was inserted before),
+and false otherwise.
+boolean startsWith(String prefix) Returns true if there is a previously inserted string word 
+that has the prefix prefix, and false otherwise.
+ 
+Example 1:
+Input
+["Trie", "insert", "search", "search", "startsWith", "insert", "search"]
+[[], ["apple"], ["apple"], ["app"], ["app"], ["app"], ["app"]]
+Output
+[null, null, true, false, true, null, true]
+
+Explanation
+Trie trie = new Trie();
+trie.insert("apple");
+trie.search("apple");   // return True
+trie.search("app");     // return False
+trie.startsWith("app"); // return True
+trie.insert("app");
+trie.search("app");     // return True
+
+
+
+Solution:
+
+//Time Complexity: O(L)
+//Space Complexity: O(N*L) where N is number of words and L is avg length of words
+
+class TrieNode {
+public:
+    char data;
+    TrieNode* children[26];
+    bool isTerminal;
+
+    TrieNode(char ch) {
+        data = ch;
+        for (int i = 0; i < 26; i++) {
+            // Initialize all children to NULL
+            children[i] = NULL;
+        }
+        isTerminal = false;
+    }
+};
+
+class Trie {
+public:
+    TrieNode* root;
+
+    Trie() {
+        // Root node with empty character
+        root = new TrieNode('\0');
+    }
+
+    void insertUtil(TrieNode* root, string word) {
+        // base case
+        if (word.length() == 0) {
+            root->isTerminal = true;
+            return;
+        }
+        // Calculate index for the first character
+        int index = word[0] - 'a';
+        TrieNode* child;
+
+        // present
+        if (root->children[index] != NULL) {
+            child = root->children[index];
+        } else {
+            // absent
+            // If child node doesn't exist, create it
+            child = new TrieNode(word[0]);
+            root->children[index] = child;
+        }
+
+        // Recursively insert the remaining characters
+        insertUtil(child, word.substr(1));
+    }
+
+    void insert(string word) {
+        insertUtil(root, word);
+    }
+
+    bool searchUtil(TrieNode* root, string word) {
+        // base case
+        if (word.length() == 0) {
+            return root->isTerminal;
+        }
+
+        int index = word[0] - 'a';
+        TrieNode* child;
+
+        // present
+        if (root->children[index] != NULL) {
+            child = root->children[index];
+        } else {
+            // absent
+            return false;
+        }
+
+        // recursion
+        return searchUtil(child, word.substr(1));
+    }
+
+    bool search(string word) {
+        return searchUtil(root, word);
+    }
+
+    bool prefixUtil(TrieNode* root, string prefix) {
+        // base case
+        if (prefix.length() == 0) {
+            return true;
+        }
+
+        int index = prefix[0] - 'a';
+        TrieNode* child;
+
+        // present
+        if (root->children[index] != NULL) {
+            child = root->children[index];
+        } else {
+            // absent
+            return false;
+        }
+
+        // recursion
+        return prefixUtil(child, prefix.substr(1));
+    }
+
+    bool startsWith(string prefix) {
+        return prefixUtil(root, prefix);
+    }
+};
