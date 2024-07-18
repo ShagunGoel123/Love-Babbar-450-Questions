@@ -1,0 +1,112 @@
+Problem:
+
+Consider a rat placed at (0, 0) in a square matrix mat of order n* n. 
+It has to reach the destination at (n - 1, n - 1).
+Find all possible paths that the rat can take to reach from source to destination.
+The directions in which the rat can move are 'U'(up), 'D'(down), 'L' (left), 'R' (right).
+Value 0 at a cell in the matrix represents that it is blocked and rat cannot move to it while
+value 1 at a cell in the matrix represents that rat can be travel through it.
+Note: In a path, no cell can be visited more than one time. If the source cell is 0,
+the rat cannot move to any other cell. In case of no path, return an empty list.
+The driver will output "-1" automatically.
+
+Examples:
+Input: mat[][] = {{1, 0, 0, 0},
+         {1, 1, 0, 1}, 
+         {1, 1, 0, 0},
+         {0, 1, 1, 1}}
+Output:
+DDRDRR DRDDRR
+Explanation:
+The rat can reach the destination at 
+(3, 3) from (0, 0) by two paths - DRDDRR 
+and DDRDRR, when printed in sorted order 
+we get DDRDRR DRDDRR.
+
+Input: mat[][] = {{1, 0},
+         {1, 0}}
+Output:
+-1
+Explanation:
+No path exists and destination cell is 
+blocked.
+
+
+
+Solution:
+
+//Time Complexity: O(4^n^n)
+//Space Complexity: O(n*n)
+
+bool isSafe(int newx,int newy,vector<vector<bool>> &vis, vector<vector<int>>&mat,int n){
+    if((newx >=0 && newx < n)&&(newy >=0 && newy < n)&& vis[newx][newy] != 1
+    && mat[newx][newy] == 1){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void solve(int x, int y, vector<vector<int>>&mat, int n, vector<string> &ans, 
+vector<vector<bool>> &vis, string path){
+    // Base case: if destination is reached, add path to answers
+    if(x == n-1 && y == n-1){
+        ans.push_back(path);
+        return;
+    }
+    
+    //4 movement
+    //D,L,R,U
+    
+    //Down
+    if(isSafe(x+1,y,vis,mat,n)){
+         // Mark the current cell as visited
+        vis[x][y] = 1;
+        solve(x+1,y,mat,n,ans,vis,path+'D');
+         // Unmark the current cell (backtracking)
+        vis[x][y] = 0;
+    }
+    
+     //Left
+    if(isSafe(x,y-1,vis,mat,n)){
+        vis[x][y] = 1;
+        solve(x,y-1,mat,n,ans,vis,path+'L');
+        vis[x][y] = 0;
+    }
+    
+     //Right
+    if(isSafe(x,y+1,vis,mat,n)){
+        vis[x][y] = 1;
+        solve(x,y+1,mat,n,ans,vis,path+'R');
+        vis[x][y] = 0;
+    }
+    
+     //Up
+    if(isSafe(x-1,y,vis,mat,n)){
+        vis[x][y] = 1;
+        solve(x-1,y,mat,n,ans,vis,path+'U');
+        vis[x][y] = 0;
+    }
+    
+}
+class Solution {
+  public:
+  // Function to find all paths from (0, 0) to (n-1, n-1)
+    vector<string> findPath(vector<vector<int>> &mat) {
+        int n = mat.size();
+        vector<string>ans;
+        // Initialize visited matrix with false
+        vector<vector<bool>> visited(n, vector<bool>(n,0));
+        string path = "";
+        
+        if(mat[0][0] == 0){
+            return ans;
+        }
+        
+        // Start solving from the initial point (0, 0)
+        solve(0,0,mat,n,ans,visited,path);
+        return ans;
+        
+    }
+};
