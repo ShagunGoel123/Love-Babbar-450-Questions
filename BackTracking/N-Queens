@@ -1,0 +1,94 @@
+Problem:
+
+https://leetcode.com/problems/n-queens/description/
+
+
+Solution:
+
+//Time Complexity: O(n!), due to the factorial nature of permutations in placing queens
+//Space Complexity: O(n^2), due to the board representation and storage requirements.
+
+class Solution {
+public:
+    
+    void addSolution(vector<vector<string>> &ans, vector<vector<string>> &board, int n){
+        vector<string> temp;
+        for(int i=0;i<n;i++){
+            string row = "";
+            for(int j=0;j<n;j++){
+                row += board[i][j];
+            }
+            temp.push_back(row);
+        }
+        ans.push_back(temp);
+    }
+    
+    // Checks if it's safe to place a queen at board[row][col]
+    bool isSafe(int row, int col, vector<vector<string>> &board, int n){
+        int x = row;
+        int y = col;
+
+        //check for same row
+        while(y >= 0){
+            if(board[x][y] == "Q"){
+                return false;
+            }
+            y--;
+        }
+
+         // Check for upper left diagonal
+         x = row;
+         y = col;
+        while(x>=0 && y>=0){
+            if(board[x][y] == "Q"){
+                return false;
+            }
+            x--;
+            y--;
+        }
+ 
+        // Check for lower left diagonal
+        x = row;
+        y = col;
+        while(x<n && y>=0){
+            if(board[x][y] == "Q"){
+                return false;
+            }
+            x++;
+            y--;
+        }
+        return true;
+    }
+ 
+    // Recursively solves the N-Queens problem
+    void solve(int col, vector<vector<string>> &ans, vector<vector<string>> &board, int n){
+        //base case
+        if(col == n){
+            addSolution(ans, board, n);
+            return;
+        }
+
+        //solve 1 case and rest Recursion will take care
+         // Try placing a queen in all rows one by one
+        for(int row=0;row<n;row++){
+            if(isSafe(row, col, board, n)){
+                //if placing queen is safe
+                board[row][col] = "Q";
+                // Recur to place the rest of the queens
+                solve(col+1, ans, board, n);
+                //backtrack and remove the queen
+                board[row][col] = ".";  
+            }
+        }
+    } 
+ 
+     // Main function to solve the N-Queens problem
+    vector<vector<string>> solveNQueens(int n) {
+        // Initialize the board with empty cells
+        vector<vector<string>> board(n, vector<string>(n,"."));
+        vector<vector<string>> ans;
+         // Start solving from the first column
+        solve(0, ans, board, n);
+        return ans;
+    }
+};
