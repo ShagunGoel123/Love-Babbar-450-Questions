@@ -1,0 +1,64 @@
+Problem:
+
+https://leetcode.com/problems/sudoku-solver/description/
+
+
+Solution:
+
+//Time Complexity: O(9^n), where N is the number of empty cells.
+//Space Complexity: O(n),  where N is the number of empty cells.
+
+class Solution {
+public:
+    bool isSafe(int row, int col, vector<vector<char>> &sudoku, char val){
+        for(int i=0;i<sudoku.size();i++){
+            // Check if 'val' is already present in the current row
+            if(sudoku[row][i] == val){
+                return false;
+            }
+             // Check if 'val' is already present in the current column
+            if(sudoku[i][col] == val){
+                return false;
+            }
+            // Check if 'val' is already present in the current 3x3 sub-grid
+            if(sudoku[3*(row/3) + i/3][3*(col/3) + i%3] == val){
+                return false;
+            }
+        }
+        return true;
+    }
+    bool solve(vector<vector<char>> &sudoku){
+        int n = sudoku[0].size();
+        for(int row=0;row<n;row++){
+            for(int col=0;col<n;col++){
+
+                //cell empty
+                if(sudoku[row][col] == '.'){
+                    // Try placing each number from '1' to '9' in the empty cell
+                    for(char val='1';val<='9';val++){
+                        if(isSafe(row, col, sudoku, val)){
+                            // Place 'val' in the cell
+                            sudoku[row][col] = val;
+                            //recursive call
+                            bool isSolutionPossible = solve(sudoku);
+                            if(isSolutionPossible){
+                                // If the board is solved, return true
+                                return true;
+                            }
+                            else{
+                                 // If not, backtrack by resetting the cell
+                                sudoku[row][col] = '.';
+                            }
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        // If all cells are correctly filled, return true
+        return true;
+    }
+    void solveSudoku(vector<vector<char>>& board) {
+        solve(board); 
+    }
+};
