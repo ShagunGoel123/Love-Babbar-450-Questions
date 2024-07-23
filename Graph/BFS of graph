@@ -1,0 +1,49 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/bfs-traversal-of-graph/1
+
+
+Solution:
+
+//Time Complexity: O(V+E)
+//Space Complexity: O(V+E)
+
+class Solution {
+  public:
+    void bfs(vector<int> adj[], unordered_map<int, bool> &visited, vector<int> &ans, int node){
+        queue<int> q;
+        q.push(node);
+        visited[node] = 1;
+        
+        while(!q.empty()){
+            // Get the front node from the queue and remove it from the queue
+            int frontNode = q.front();
+            q.pop();
+            
+            //store frontnode into ans
+            ans.push_back(frontNode);
+            
+            //traverse all neighbours of frontNode
+            for(auto i: adj[frontNode]){
+                // If the neighbor has not been visited, add it to the queue and mark it as visited
+                if(!visited[i]){
+                    q.push(i);
+                    visited[i] = 1;
+                }
+            }
+        }
+    }
+    // Function to return Breadth First Traversal of given graph.
+    vector<int> bfsOfGraph(int V, vector<int> adj[]) {
+        vector<int> ans;
+         // Map to keep track of visited nodes
+        unordered_map<int, bool> visited;
+        
+            // If the node has not been visited, perform BFS from that node
+            if(!visited[0]){
+                bfs(adj, visited, ans, 0);
+            }
+        
+        return ans;
+    }
+};
