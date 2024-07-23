@@ -1,0 +1,37 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/depth-first-traversal-for-a-graph/1
+
+
+Solution:
+
+//Time Complexity: O(V+E), where E is number of edges and V is number of vertices in the graph.
+//Space Complexity: O(V), where V is the number of vertices in the graph.
+
+class Solution {
+  public:  
+    void dfs(int node, unordered_map<int, bool> &visited, vector<int> adj[], vector<int> &ans){
+        // Add the current node to the DFS traversal result
+        ans.push_back(node);
+        visited[node] = true;
+        
+        //recursive call for all connected nodes
+        for(auto i: adj[node]){
+            // If the node i is not visited, perform DFS on it
+            if(!visited[i]){
+                dfs(i, visited, adj, ans);
+            }
+        }
+    }
+    // Function to return a list containing the DFS traversal of the graph.
+    vector<int> dfsOfGraph(int V, vector<int> adj[]) {
+        vector<int> ans;
+        // Map to keep track of visited nodes
+        unordered_map<int, bool> visited;
+        
+        // Start DFS from the node 0 
+        dfs(0, visited, adj, ans);
+        
+        return ans;
+    }
+};
