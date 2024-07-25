@@ -5,6 +5,7 @@ https://leetcode.com/problems/redundant-connection/description/
 
 Solution:
 
+//Approach 1: By BFS traversal
 //Time Complexity: O(V.E)
 //Space Complexity: O(V+E)
 
@@ -57,6 +58,61 @@ public:
             adj[u].push_back(v); // Add the edge to the adjacency list
             adj[v].push_back(u);
             if(isCyclicBFS(u, visited, adj, cycleEdge)){ // Check if the added edge forms a cycle
+                return {u, v}; // Return the redundant edge
+            }
+        }
+        return {}; // Return an empty vector if no redundant edge is found
+    }
+};
+
+
+
+//Approach 2: By DFS traversal
+//Time Complexity: O(E*V)
+//Space Complexity: O(V+E)
+
+class Solution {
+private:
+    // Helper function to detect a cycle using DFS
+    bool isCyclicDFS(int src, int parent, unordered_map<int, bool>& visited, unordered_map<int, list<int>>& adj) {
+        // Mark the current node as visited
+        visited[src] = true;
+
+        // Iterate over all adjacent nodes
+        for (auto neighbour : adj[src]) {
+            // If the adjacent node is not visited, recurse on it
+            if (!visited[neighbour]) {
+                bool cycleDetected = isCyclicDFS(neighbour, src, visited, adj);
+                if (cycleDetected) {
+                    return true; // If a cycle is detected, return true
+                }
+            }
+            // If the adjacent node is visited and is not the parent of the current node, a cycle is detected
+            else if (neighbour != parent) {
+                return true;
+            }
+        }
+        return false; // No cycle detected
+    }
+
+public:
+    // Function to find the redundant connection
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        int n = edges.size(); // Number of edges
+        unordered_map<int, list<int>> adj; // Adjacency list to represent the graph
+
+        // Traverse through all the edges
+        for (int i = 0; i < n; i++) {
+            int u = edges[i][0]; // First node of the edge
+            int v = edges[i][1]; // Second node of the edge
+
+            // Before adding the edge, check if it forms a cycle
+            unordered_map<int, bool> visited; // Keep track of visited nodes
+            adj[u].push_back(v); // Add the edge to the adjacency list
+            adj[v].push_back(u); // Add the edge to the adjacency list
+
+            // Check if the added edge forms a cycle
+            if (isCyclicDFS(u, -1, visited, adj)) {
                 return {u, v}; // Return the redundant edge
             }
         }
