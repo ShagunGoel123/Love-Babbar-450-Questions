@@ -1,0 +1,56 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+
+Solution:
+
+//By DFS
+//Time Complexity: O(V+E)
+//Space Complexity: O(V)
+
+class Solution {
+  public:
+    bool checkCycleDFS(int node, unordered_map<int, bool>& visited,
+    unordered_map<int, bool>& dfsVisited, vector<int> adj[]){
+        // Mark the current node as visited
+        visited[node] = true;
+         // Mark the current node as part of the current DFS path
+        dfsVisited[node] = true;
+        
+         // Iterate over all the neighbors of the current node
+        for(auto neighbour: adj[node]){
+            // If the neighbor has not been visited, recursively check for cycles
+            if(!visited[neighbour]){
+                bool cycleDetected = checkCycleDFS(neighbour, visited, dfsVisited, adj);
+                if(cycleDetected){
+                    return true;
+                }
+            }
+            // If the neighbor is already in the current DFS path, a cycle is detected
+            else if(dfsVisited[neighbour]){
+                return true;
+            }
+        }
+         // Remove the node from the current DFS path before backtracking
+        dfsVisited[node] = false;
+        return false;
+    }
+    // Function to detect cycle in a directed graph.
+    bool isCyclic(int V, vector<int> adj[]) {
+        unordered_map<int, bool> visited;
+        unordered_map<int, bool> dfsVisited;
+        
+        // Iterate over all vertices in the graph
+        for(int i=0;i<V;i++){
+            // If the vertex has not been visited, perform DFS from this vertex
+            if(!visited[i]){
+                bool cycleFound = checkCycleDFS(i, visited, dfsVisited, adj);
+                    if(cycleFound){
+                        return true;
+                    }
+            }
+        }
+        return false;
+    }
+};
