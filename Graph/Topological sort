@@ -1,0 +1,53 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/topological-sort/1
+
+
+Solution:
+
+//By DFS
+//Time Complexity: O(V+E)
+//Space Complexity: O(V+E)
+
+class Solution
+{
+	public:
+	void topologicalSort(int node, unordered_map<int, bool>& visited,
+	stack<int>& s, vector<int> adj[]){
+	    // Mark the current node as visited.
+	    visited[node] = 1;
+	    
+	    // Recursively visit all the adjacent nodes that are not visited.
+	    for(auto neighbour: adj[node]){
+	        if(!visited[neighbour]){
+	            topologicalSort(neighbour, visited, s, adj);
+	        }
+	    }
+	        
+	    // Push the current node onto the stack after visiting all its adjacent nodes.     
+	    s.push(node);
+	    
+	}
+	//Function to return list containing vertices in Topological order. 
+	vector<int> topoSort(int V, vector<int> adj[]) 
+	{
+	    unordered_map<int, bool> visited;
+	    
+	    // Create a stack to store the topological order.
+	    stack<int> s;
+	    
+	    for(int i=0;i<V;i++){
+	        if(!visited[i]){
+	            topologicalSort(i, visited, s, adj);
+	        }
+	    }
+	                  
+	    vector<int> ans;
+	    // Pop all nodes from the stack and store them in the result vector.
+	    while(!s.empty()){
+	        ans.push_back(s.top()); 
+	        s.pop();
+	    }
+	    return ans;
+	}
+};
