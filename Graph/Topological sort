@@ -5,7 +5,7 @@ https://www.geeksforgeeks.org/problems/topological-sort/1
 
 Solution:
 
-//By DFS
+//Approach 1 - By using DFS
 //Time Complexity: O(V+E)
 //Space Complexity: O(V+E)
 
@@ -47,6 +47,56 @@ class Solution
 	    while(!s.empty()){
 	        ans.push_back(s.top()); 
 	        s.pop();
+	    }
+	    return ans;
+	}
+};
+
+
+
+
+//Approach 2 - BY using BFS(Kahn's Algorithm)
+//Time Complexity: O(V+E)
+//Space Complexity: O(V+E)
+
+class Solution
+{
+	public:
+	//Function to return list containing vertices in Topological order. 
+	vector<int> topoSort(int V, vector<int> adj[]) 
+	{
+	    //find all indegrees
+	    vector<int> indegree(V);
+	    for(auto i=0;i<V;i++){
+	        for(auto j: adj[i]){
+	            indegree[j]++;
+	        }
+	    }
+	    
+	     // Push all vertices with 0 in-degree into the queue
+	    queue<int> q;
+	    for(int i=0;i<V;i++){
+	        if(indegree[i] == 0){
+	            q.push(i);
+	        }
+	    }
+	    
+	    //do bfs
+	    vector<int> ans;
+	    while(!q.empty()){
+	        int front = q.front();
+	        q.pop();
+	        
+	        // Store the current vertex in the answer
+	        ans.push_back(front);
+	        
+	        //neighbour indegree update
+	        for(auto neighbour: adj[front]){
+	            indegree[neighbour]--;
+	            if(indegree[neighbour] == 0){
+	                q.push(neighbour);
+	            }
+	        }
 	    }
 	    return ans;
 	}
