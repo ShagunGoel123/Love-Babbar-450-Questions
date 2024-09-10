@@ -1,0 +1,115 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1?itm_source=geeksforgeeks&itm_medium=article&itm_campaign=practice_card
+
+
+Solution:
+
+//Time Complexity: O(ElogE)
+//Space Complexity: O(V+E)
+
+class DisjointSet {
+    // Vectors to store rank, parent, and size for each element.
+    vector<int> rank, parent, size;
+    
+public:
+    // Constructor to initialize the Disjoint Set data structure.
+    DisjointSet(int n) {
+        rank.resize(n + 1, 0);   // Rank initialized to 0 for all nodes.
+        parent.resize(n + 1);    // Parent of each node is set to itself.
+        size.resize(n + 1);      // Size initialized to 1 for all nodes.
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;       // Each node is its own parent (disjoint sets).
+            size[i] = 1;         // Initial size of each set is 1.
+        }
+    }
+
+    // Function to find the ultimate parent of a node using path compression.
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;         // If the node is its own parent, return it.
+        // Otherwise, recursively find the ultimate parent and compress the path.
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    // Function to perform union by rank (joining two sets based on their rank).
+    void unionByRank(int u, int v) {
+        int ulp_u = findUPar(u);  // Find ultimate parent of u.
+        int ulp_v = findUPar(v);  // Find ultimate parent of v.
+        if (ulp_u == ulp_v) return; // If they are in the same set, do nothing.
+        
+        // Union based on rank: the tree with a lower rank is merged into the tree with higher rank.
+        if (rank[ulp_u] < rank[ulp_v]) {
+            parent[ulp_u] = ulp_v;  // u's parent becomes v's parent.
+        }
+        else if (rank[ulp_v] < rank[ulp_u]) {
+            parent[ulp_v] = ulp_u;  // v's parent becomes u's parent.
+        }
+        else {
+            parent[ulp_v] = ulp_u;  // If both ranks are the same, merge v into u and increase u's rank.
+            rank[ulp_u]++;
+        }
+    }
+
+    // Function to perform union by size (joining two sets based on their size).
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);  // Find ultimate parent of u.
+        int ulp_v = findUPar(v);  // Find ultimate parent of v.
+        if (ulp_u == ulp_v) return; // If they are in the same set, do nothing.
+        
+        // Union based on size: the smaller set is merged into the larger set.
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;  // u's set merges into v's set.
+            size[ulp_v] += size[ulp_u];  // Update the size of the merged set.
+        }
+        else {
+            parent[ulp_v] = ulp_u;  // v's set merges into u's set.
+            size[ulp_u] += size[ulp_v];  // Update the size of the merged set.
+        }
+    }
+};
+
+class Solution
+{
+    public:
+    // Function to find the sum of weights of edges of the Minimum Spanning Tree (MST).
+    int spanningTree(int V, vector<vector<int>> adj[]) {
+        vector<pair<int, pair<int, int>>> edges;
+        
+        // Convert adjacency list to a list of edges.
+        for(int i = 0; i < V; i++) {
+            for(auto it : adj[i]) {
+                int adjNode = it[0];  // Adjacent node to 'i'.
+                int wt = it[1];       // Weight of the edge between 'i' and 'adjNode'.
+                int node = i;
+                
+                // Add the edge to the edges list as {weight, {node, adjacent node}}.
+                edges.push_back({wt, {node, adjNode}});
+            }
+        }
+        
+        // Initialize the disjoint set for V vertices.
+        DisjointSet ds(V);
+        
+        // Sort the edges by weight (greedy choice for Kruskal's algorithm).
+        sort(edges.begin(), edges.end());
+        
+        int mstWt = 0;  // Initialize MST weight.
+        
+        // Process each edge in ascending order of weight.
+        for(auto it : edges) {
+            int wt = it.first;            // Get the weight of the edge.
+            int u = it.second.first;      // Get one end of the edge.
+            int v = it.second.second;     // Get the other end of the edge.
+            
+            // Check if 'u' and 'v' are in different sets.
+            if(ds.findUPar(u) != ds.findUPar(v)) {
+                mstWt += wt;              // Add the weight to MST.
+                ds.unionBySize(u, v);     // Perform union of sets containing 'u' and 'v'.
+            }
+        }
+        
+        // Return the total weight of the MST.
+        return mstWt;
+    }
+};
