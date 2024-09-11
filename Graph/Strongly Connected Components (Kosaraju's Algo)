@@ -1,0 +1,69 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=strongly-connected-components-kosarajus-algo
+
+
+Solution:
+
+//Time Complexity: O(V+E)
+//Space Complexity: O(V+E)
+
+class Solution
+{
+	public:
+	
+	// Function for DFS traversal to sort nodes in topological order
+	void dfs(int node, unordered_map<int, bool> &vis, stack<int> &st, vector<vector<int>>& adj){
+	    vis[node] = true;
+	    for(auto nbr : adj[node]){
+	        if(!vis[nbr]){
+	            dfs(nbr, vis, st, adj);
+	        }
+	    }
+	     // After all neighbors are processed, push the current node onto the stack
+	    st.push(node);
+	}
+	
+	// Function for DFS traversal on the transposed graph
+	void revDfs(int node, unordered_map<int, bool> &vis,unordered_map<int, list<int>>& adj){
+	    vis[node] = true;
+	    for(auto nbr : adj[node]){
+	        if(!vis[nbr]){
+	            revDfs(nbr, vis, adj);
+	        }
+	    }
+	}
+	//Function to find number of strongly connected components in the graph.
+    int kosaraju(int V, vector<vector<int>>& adj)
+    {
+         // Step 1: Perform DFS to get a topological ordering of nodes
+        stack<int> st;
+        unordered_map<int, bool> vis;
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                dfs(i, vis, st, adj);
+            }
+        }
+        
+         // Step 2: Create a transpose (reverse) of the graph
+        unordered_map<int, list<int>> transpose;
+        for(int i=0;i<V;i++){
+            vis[i] = 0;
+            for(auto nbr:adj[i]){
+                transpose[nbr].push_back(i);
+            }
+        }
+        
+        // Step 3: Perform DFS on the transposed graph in the order defined by the stack
+        int count = 0;
+        while(!st.empty()){
+            int top = st.top();
+            st.pop();
+            if(!vis[top]){
+                count++;
+                revDfs(top, vis, transpose);
+            }
+        }
+        return count;
+    }
+};
