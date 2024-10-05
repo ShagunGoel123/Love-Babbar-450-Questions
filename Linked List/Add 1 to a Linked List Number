@@ -1,0 +1,35 @@
+Problem:
+
+https://www.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1
+
+Solution:
+
+//Time Complexity: O(n)
+//Space Complexity: O(n)
+
+class Solution {
+  public:
+    int addHelper(Node* temp){
+        if(temp == NULL){
+            return 1;
+        }
+        //Recursive call to process the next node
+        int carry = addHelper(temp->next);
+        temp->data += carry;
+        if(temp->data < 10){
+            return 0;
+        }
+        temp->data = 0;
+        return 1;
+    }
+    
+    Node* addOne(Node* head) {
+        int carry = addHelper(head);
+        if(carry == 1){
+            Node* newNode = new Node(1);
+            newNode->next = head;
+            head = newNode;
+        }
+        return head;
+    }
+};
